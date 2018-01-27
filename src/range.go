@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 
 func main() {
@@ -14,10 +17,20 @@ func main() {
 	}
 
 
+
 	fmt.Println("Печать идентификатора i, a ")	
 	
 	for i, a := range A {
 		fmt.Println("i = ", i, "a = ", a)
 	}
+
+
+	// обязательно массив бесконечный
+
+	B := []string{"a", "b", "c"}
+
+	fmt.Println("Используем strings.Join")
+
+	fmt.Println(strings.Join(B, " "))
 
 }
