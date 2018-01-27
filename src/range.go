@@ -24,13 +24,4 @@ func main() {
 		fmt.Println("i = ", i, "a = ", a)
 	}
 
-
-	// обязательно массив бесконечный
-
-	B := []string{"a", "b", "c"}
-
-	fmt.Println("Используем strings.Join")
-
-	fmt.Println(strings.Join(B, " "))
-
 }
