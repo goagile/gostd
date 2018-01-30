@@ -4,6 +4,7 @@ import "fmt"
 
 func main() {
 
+<<<<<<< HEAD
 	// пример 1
 	fmt.Println()
 	x := 1  // объявить переменную x и присвоить ей значение 1
@@ -30,6 +31,17 @@ func getV() *int {
 	var v int
 	v = 1
 	return &v
+=======
+	x := 1
+	fmt.Println("x =", x)
+	p := &x
+	fmt.Println("&x =", *p)
+
+	incr(&x)
+	incr(&x)
+	fmt.Println("x incr =", x)
+
+>>>>>>> a1bc0508b218de19424b6e6ca826267080ac74f9
 }
 
 func incr(p *int) int {
