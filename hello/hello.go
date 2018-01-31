@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/khardi/trygo/string"
+)
 
 func main() {
-	fmt.Println("Hello, new gopher!")
+	fmt.Println(string.Reverse("Hello, new gopher!"))
 }

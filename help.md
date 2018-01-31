@@ -18,3 +18,21 @@
 	$ export PATH=$GOBIN:$PATH
 	$ $GOBIN/hello
 	$ hello
+
+Создание модулей go
+
+	$ mkdir string
+	$ cd string
+	$ touch string.go
+	$ subl string.go
+	$ go build
+	$ go install
+	$ cd ..
+	$ cd hello/
+	$ subl hello.go
+	$ cd ..
+	$ go install
+
+Установка модулей
+
+	$ go get github.com/julienschmidt/httprouter
