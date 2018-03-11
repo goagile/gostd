@@ -16,7 +16,7 @@ func (m *PancakeHouseMenu) AddItem(Name, Description string, Vegeterian bool,
 		m.MenuItems = append(m.MenuItems, mi)
 }
 
-func (m *PancakeHouseMenu) Iterator() *PancakeIterator {
+func (m *PancakeHouseMenu) Iterator() Iterator {
 	it := new(PancakeIterator)
 	it.Position = 0
 	it.Items = m.MenuItems

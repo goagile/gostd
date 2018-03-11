@@ -24,7 +24,7 @@ func (m *DinerMenu) AddItem(Name, Description string, Vegeterian bool,
     m.NumberOfItems += 1
 }
 
-func (m *DinerMenu) Iterator() *DinerIterator {
+func (m *DinerMenu) Iterator() Iterator {
 	it := new(DinerIterator)
 	it.Position = 0
 	it.Items = m.MenuItems

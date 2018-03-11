@@ -18,7 +18,7 @@ func (m *IceCreamMenu) AddItem(Name, Description string, Vegetarian bool,
   m.MenuItems[Name] = MenuItem{Name, Description, Vegetarian, Price}
 }
 
-func (m *IceCreamMenu) Iterator() *IceCreamIterator {
+func (m *IceCreamMenu) Iterator() Iterator {
   it := new(IceCreamIterator)
   it.Position = 0
   it.Items = m.MenuItems
