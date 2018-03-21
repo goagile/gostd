@@ -24,9 +24,7 @@ type PersonResult struct {
 func (r *PersonResult) Validate(errLog *ErrLog) bool {
 	result := true
 	for _, p := range r.Persons {
-		if !p.FirstName.Validate(errLog) {
-			result = false
-		}
+		result = p.Validate(errLog)
 	}
 	return result
 }
@@ -38,7 +36,10 @@ type Person struct {
 
 func (p *Person) Validate(errLog *ErrLog) bool {
 	// return p.FirstName.Validate(errLog, "first_name")
-	return p.FirstName.Validate(errLog)
+	if !p.FirstName.Validate(errLog) {
+		return false
+	}
+	return true
 }
 
 type Education struct {
@@ -51,7 +52,7 @@ type NotEmptyName struct {
 	Value string
 }
 
-func (n *NotEmptyName) Validate(errLog *ErrLog) bool {
+func (n NotEmptyName) Validate(errLog *ErrLog) bool {
 	if n.Value == "" {
 		errLog.Add("пустое поле")
 		return false
@@ -60,10 +61,10 @@ func (n *NotEmptyName) Validate(errLog *ErrLog) bool {
 }
 
 func main() {
-	// f1()
+	f1()
 	// f2()
 	// f3()
-	testNotEmptyName()
+	// testNotEmptyName()
 }
 
 func testNotEmptyName() {
@@ -93,6 +94,7 @@ func f3() {
 }
 
 func f1() {
+	fmt.Println("f1")
 	byt := []byte(`{
 		"persons": [
 			{
