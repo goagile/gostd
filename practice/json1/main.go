@@ -23,8 +23,8 @@ type PersonResult struct {
 
 func (r *PersonResult) Validate(errLog *ErrLog) bool {
 	result := true
-	for _, p := range r.Persons {
-		result = p.Validate(errLog)
+	for i, p := range r.Persons {
+		result = p.Validate(errLog, i)
 	}
 	return result
 }
@@ -34,12 +34,9 @@ type Person struct {
 	Education []Education  `json:education`
 }
 
-func (p *Person) Validate(errLog *ErrLog) bool {
-	// return p.FirstName.Validate(errLog, "first_name")
-	if !p.FirstName.Validate(errLog) {
-		return false
-	}
-	return true
+func (p *Person) Validate(errLog *ErrLog, index int) bool {
+	result := p.FirstName.Validate(errLog, "first_name")
+	return result
 }
 
 type Education struct {
