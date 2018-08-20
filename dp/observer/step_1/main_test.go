@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"testing"
 )
 
-func main() {
+func TestGetHours(t *testing.T) {
 	var clock Clock
 	clock = new(DigitalClock)
-
 	clock.SetTime(10, 30, 0)
 
-	fmt.Printf("hours: %v\n", clock.Hours())
+	if h := clock.Hours(); h != 10 {
+		t.Fatalf("%v", h)
+	}
 }
 
 type Clock interface {
