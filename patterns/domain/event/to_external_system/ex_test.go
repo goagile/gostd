@@ -1,3 +1,10 @@
+//
+// Patterns:
+// - Domain Object
+// - Event
+// - Registry
+// - Gateway
+//
 package to_external_system
 
 import (

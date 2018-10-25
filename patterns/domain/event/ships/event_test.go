@@ -1,3 +1,9 @@
+//
+// Patterns:
+// - Domain Object
+// - Event
+// - Event Processor
+//
 package main
 
 import (

@@ -1,3 +1,9 @@
+//
+// Patterns:
+// - Event Bus
+// - Event
+//
+
 package main
 
 import "testing"
