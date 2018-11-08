@@ -19,7 +19,7 @@ func main() {
 			Text: "Hello world",
 		},
 		&Post{
-			ID:   "456",
+			ID:   "3435",
 			Text: "Ola-la",
 		},
 	}
