@@ -1,29 +1,32 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"path"
-	"strings"
+
+	"trygo/site/core"
+	"trygo/site/core/search"
 
 	"github.com/bmizerany/pat"
-	"github.com/russross/blackfriday"
 )
 
 var (
-	post_template = template.Must(template.ParseFiles(
+	PostTemplate = template.Must(template.ParseFiles(
 		path.Join("templates", "layout.html"),
 		path.Join("templates", "post.html"),
 	))
 
-	error_template = template.Must(template.ParseFiles(
+	ErrorTemplate = template.Must(template.ParseFiles(
 		path.Join("templates", "layout.html"),
 		path.Join("templates", "error.html"),
 	))
+
+	BlevePath = "example.bleve"
 )
 
 func main() {
@@ -42,6 +45,55 @@ func main() {
 	http.ListenAndServe(":3000", nil)
 }
 
+func searchhandler(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("interna server err:", err)
+			http.Error(w, http.StatusText(500), 500)
+			return
+		}
+	}()
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		log.Println("read request body err:", err)
+		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	var data map[string]interface{}
+	if err := json.Unmarshal(b, &data); err != nil {
+		log.Println("unmarshal request body err:", err)
+		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	searchstring, ok := data["searchstring"].(string)
+	if !ok {
+		log.Println("searchstring convert err")
+		http.Error(w, http.StatusText(400), 400)
+		return
+	}
+
+	postShortInfo, err := search.FindPostShortInfo(BlevePath, searchstring)
+	if err != nil {
+		log.Println("find post short info err:", err)
+		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	byt, err := json.Marshal(postShortInfo)
+	if err != nil {
+		log.Println("post short info marshal err:", err)
+		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(byt)
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	params := r.URL.Query()
 	page := params.Get(":page")
@@ -52,33 +104,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		post_md = p + "/index.md"
 	}
-	post, status, err := load_post(post_md)
-	// post, status, err := load_post("posts/index.md")
+	post, status, err := core.LoadPost(post_md)
 	if err != nil {
-		// http.Error(w, http.StatusText(status), status)
+		log.Println(err)
 		errorHandler(w, r, status)
 		return
 	}
-	// filebyt, err := ioutil.ReadFile("posts/index.md")
-	// if err != nil {
-	// 	log.Println("read .md error:", err)
-	// 	http.Error(w, http.StatusText(500), 500)
-	// }
-	// lines := strings.Split(string(filebyt), "\n")
-	// title := string(lines[0])
-	// body := strings.Join(lines[1:len(lines)], "\n")
-	// body = string(blackfriday.MarkdownCommon([]byte(body)))
-	// post := Post{title, template.HTML(body)}
-	if err := post_template.ExecuteTemplate(w, "layout", post); err != nil {
+	if err := PostTemplate.ExecuteTemplate(w, "layout", post); err != nil {
 		log.Println(err)
-		// http.Error(w, http.StatusText(500), 500)
 		errorHandler(w, r, status)
 	}
 }
 
 func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
 	w.WriteHeader(status)
-	if err := error_template.ExecuteTemplate(w, "layout", map[string]interface{}{
+	if err := ErrorTemplate.ExecuteTemplate(w, "layout", map[string]interface{}{
 		"Error":  http.StatusText(status),
 		"Status": status,
 	}); err != nil {
@@ -86,56 +126,4 @@ func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
 		http.Error(w, http.StatusText(500), 500)
 		return
 	}
-}
-
-type Post struct {
-	Title string
-	Body  template.HTML
-}
-
-func load_post(md string) (Post, int, error) {
-	info, err := os.Stat(md)
-	if err != nil {
-		if os.IsNotExist(err) {
-			// файл не существует
-			return Post{}, http.StatusNotFound, err
-		}
-	}
-	if info.IsDir() {
-		// не файл, а папка
-		return Post{}, http.StatusNotFound, fmt.Errorf("dir")
-	}
-	fileread, err := ioutil.ReadFile(md)
-	if err != nil {
-		log.Println("read .md error:", err)
-		return Post{}, http.StatusNotFound, nil
-	}
-	lines := strings.Split(string(fileread), "\n")
-	title := string(lines[0])
-	body := strings.Join(lines[1:len(lines)], "\n")
-	body = string(blackfriday.MarkdownCommon([]byte(body)))
-	post := Post{title, template.HTML(body)}
-	return post, 200, nil
-}
-
-func searchhandler(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println(err)
-		}
-	}()
-
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// decoder := json.NewDecoder(r.Body)
-	// var data map[string]interface{}
-	// err := decoder.Decode(&data)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	log.Println(string(b))
 }
