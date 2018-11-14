@@ -18,7 +18,13 @@ func FindPostShortInfo(blevepath, searchstring string) ([]map[string]interface{}
 		return result, fmt.Errorf("bleve.Open: err: %v", err)
 	}
 
-	search := bleve.NewSearchRequest(bleve.NewMatchQuery(searchstring))
+	ch := bleve.NewTermQuery(searchstring)
+	mq := bleve.NewMatchPhraseQuery(searchstring)
+	rq := bleve.NewRegexpQuery(searchstring)
+	qsq := bleve.NewQueryStringQuery(searchstring)
+	q := bleve.NewDisjunctionQuery(ch, mq, rq, qsq)
+
+	search := bleve.NewSearchRequest(q)
 	search.Fields = []string{"title"}
 	searchResults, err := index.Search(search)
 	if err != nil {
