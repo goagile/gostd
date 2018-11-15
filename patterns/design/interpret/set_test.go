@@ -39,3 +39,28 @@ func Test_Set_Two_Fields(t *testing.T) {
 		t.Errorf("\n want: %v\n got : %v\n", want, got)
 	}
 }
+
+func Test_Set_Two_Fields_Inherit(t *testing.T) {
+	result := map[string]interface{}{}
+
+	set :=
+		Set("person",
+			Set("fname", "A"),
+			Set("lname", "B"))
+
+	set.To(result, map[string]interface{}{})
+
+	person := result["person"].(map[string]interface{})
+
+	want := "A"
+	got := person["fname"]
+	if want != got {
+		t.Errorf("\n want: %v\n got : %v\n", want, got)
+	}
+
+	want = "B"
+	got = person["lname"]
+	if want != got {
+		t.Errorf("\n want: %v\n got : %v\n", want, got)
+	}
+}

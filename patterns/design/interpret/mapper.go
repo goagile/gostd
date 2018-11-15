@@ -17,8 +17,19 @@ type Getter interface {
 //
 // Set
 //
-func Set(key string, value interface{}) *set {
-	return &set{key, value}
+func Set(key string, values ...interface{}) *set {
+	if len(values) == 0 {
+		return &set{key, nil}
+	}
+	if len(values) > 1 {
+		setters := []Setter{}
+		for _, v := range values {
+			s := v.(Setter)
+			setters = append(setters, s)
+		}
+		return &set{key, Fields(setters...)}
+	}
+	return &set{key, values[0]}
 }
 
 type set struct {
@@ -28,14 +39,17 @@ type set struct {
 
 func (s *set) To(result map[string]interface{}, data map[string]interface{}) {
 	switch v := s.value.(type) {
+
 	case Setter:
 		inner := map[string]interface{}{}
 		v.To(inner, data)
 		result[s.key] = inner
+
 	case Getter:
 		result[s.key] = v.From(data)
+
 	default:
-		result[s.key] = s.value
+		result[s.key] = v
 	}
 }
 
@@ -93,4 +107,21 @@ func (m *mapper) Map(data map[string]interface{}) map[string]interface{} {
 		set.To(result, data)
 	}
 	return result
+}
+
+//
+// Fields
+//
+func Fields(setters ...Setter) *fields {
+	return &fields{setters}
+}
+
+type fields struct {
+	setters []Setter
+}
+
+func (f *fields) To(result map[string]interface{}, data map[string]interface{}) {
+	for _, s := range f.setters {
+		s.To(result, data)
+	}
 }
