@@ -4,5 +4,5 @@ package interpret
 // Getter
 //
 type Getter interface {
-	From(data map[string]interface{}) interface{}
+	From(result map[string]interface{}, data map[string]interface{}) interface{}
 }

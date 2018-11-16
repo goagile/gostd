@@ -40,7 +40,7 @@ func Test_Set_Two_Fields(t *testing.T) {
 	}
 }
 
-func Test_Set_Two_Fields_Inherit(t *testing.T) {
+func Test_Set_Two_Siblings(t *testing.T) {
 	result := map[string]interface{}{}
 
 	set :=

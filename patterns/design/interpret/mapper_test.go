@@ -1,6 +1,7 @@
 package interpret
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -135,5 +136,44 @@ func Test_Mapper_Decompose(t *testing.T) {
 	got = user["mname"]
 	if want != got {
 		t.Errorf("\n want: %v\n got : %v\n", want, got)
+	}
+}
+
+func Test_Mapper_GetEach(t *testing.T) {
+
+	want := map[string]interface{}{
+		"users": []interface{}{
+			map[string]interface{}{
+				"first_name": "Иван",
+				"last_name":  "Петров",
+			},
+			map[string]interface{}{
+				"first_name": "Петя",
+				"last_name":  "Сидоров",
+			},
+		},
+	}
+
+	mapper := Mapper(
+		Set("users",
+			GetEach("persons",
+				Get("first_name"),
+				Get("last_name"))))
+
+	got := mapper.Map(map[string]interface{}{
+		"persons": []interface{}{
+			map[string]interface{}{
+				"first_name": "Иван",
+				"last_name":  "Петров",
+			},
+			map[string]interface{}{
+				"first_name": "Петя",
+				"last_name":  "Сидоров",
+			},
+		},
+	})
+
+	if !reflect.DeepEqual(got, want) {
+		t.Error("must be eq")
 	}
 }

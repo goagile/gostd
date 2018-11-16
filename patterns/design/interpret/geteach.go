@@ -17,7 +17,7 @@ type geteach struct {
 	getters []KeyGetter
 }
 
-func (e *geteach) From(data map[string]interface{}) interface{} {
+func (e *geteach) From(inputresult map[string]interface{}, data map[string]interface{}) interface{} {
 	result := []interface{}{}
 
 	switch items := data[e.key].(type) {
@@ -31,7 +31,7 @@ func (e *geteach) From(data map[string]interface{}) interface{} {
 				continue
 			}
 			for _, getter := range e.getters {
-				itemresult[getter.Key()] = getter.From(elem)
+				itemresult[getter.Key()] = getter.From(inputresult, elem)
 			}
 			result = append(result, itemresult)
 		}

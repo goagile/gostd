@@ -13,6 +13,6 @@ func (n *nothingtoget) Key() string {
 	return ""
 }
 
-func (n *nothingtoget) From(data map[string]interface{}) interface{} {
+func (n *nothingtoget) From(inputresult map[string]interface{}, data map[string]interface{}) interface{} {
 	return nil
 }

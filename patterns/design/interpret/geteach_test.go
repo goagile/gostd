@@ -7,6 +7,8 @@ import (
 func Test_Each_One(t *testing.T) {
 	want := "A"
 
+	inputresult := map[string]interface{}{}
+
 	data := map[string]interface{}{
 		"persons": []interface{}{
 			map[string]interface{}{
@@ -18,7 +20,7 @@ func Test_Each_One(t *testing.T) {
 	each := GetEach("persons",
 		Get("first_name"))
 
-	result := each.From(data).([]interface{})
+	result := each.From(inputresult, data).([]interface{})
 
 	if len(result) != 1 {
 		t.Error("want len 1")
@@ -32,6 +34,8 @@ func Test_Each_One(t *testing.T) {
 }
 
 func Test_Each_Two(t *testing.T) {
+	inputresult := map[string]interface{}{}
+
 	data := map[string]interface{}{
 		"persons": []interface{}{
 			map[string]interface{}{
@@ -45,7 +49,7 @@ func Test_Each_Two(t *testing.T) {
 		Get("first_name"),
 		Get("last_name"))
 
-	result := each.From(data).([]interface{})
+	result := each.From(inputresult, data).([]interface{})
 
 	if len(result) != 1 {
 		t.Error("want len 1")

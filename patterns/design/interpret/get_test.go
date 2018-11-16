@@ -7,13 +7,15 @@ import (
 func Test_Get_One_Field(t *testing.T) {
 	want := "A"
 
+	inputresult := map[string]interface{}{}
+
 	data := map[string]interface{}{
 		"fname": "A",
 	}
 
 	get := Get("fname")
 
-	got := get.From(data)
+	got := get.From(inputresult, data)
 
 	if want != got {
 		t.Errorf("\n want: %v\n got : %v\n", want, got)
@@ -22,6 +24,8 @@ func Test_Get_One_Field(t *testing.T) {
 
 func Test_Get_Two_Fields(t *testing.T) {
 	want := "A"
+
+	inputresult := map[string]interface{}{}
 
 	data := map[string]interface{}{
 		"person": map[string]interface{}{
@@ -32,7 +36,7 @@ func Test_Get_Two_Fields(t *testing.T) {
 	get := Get("person",
 		Get("fname"))
 
-	got := get.From(data)
+	got := get.From(inputresult, data)
 
 	if want != got {
 		t.Errorf("\n want: %v\n got : %v\n", want, got)
@@ -40,6 +44,9 @@ func Test_Get_Two_Fields(t *testing.T) {
 }
 
 func Test_Get_Two_Siblings(t *testing.T) {
+
+	inputresult := map[string]interface{}{}
+
 	data := map[string]interface{}{
 		"person": map[string]interface{}{
 			"fname": "A",
@@ -51,7 +58,7 @@ func Test_Get_Two_Siblings(t *testing.T) {
 		Get("fname"),
 		Get("lname"))
 
-	rawresult := get.From(data)
+	rawresult := get.From(inputresult, data)
 
 	result := rawresult.(map[string]interface{})
 
@@ -66,4 +73,26 @@ func Test_Get_Two_Siblings(t *testing.T) {
 	if want != got {
 		t.Errorf("\n want: %v\n got : %v\n", want, got)
 	}
+}
+
+func Test_Get_Set_One(t *testing.T) {
+	// want := "A"
+
+	inputresult := map[string]interface{}{}
+
+	data := map[string]interface{}{
+		"fname": "A",
+	}
+
+	get :=
+		Get("fname",
+			Set("first_name"))
+
+	get.From(inputresult, data)
+
+	t.Error(inputresult)
+
+	// if want != got {
+	// 	t.Errorf("\n want: %v\n got : %v\n", want, got)
+	// }
 }

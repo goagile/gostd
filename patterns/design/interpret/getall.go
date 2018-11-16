@@ -11,10 +11,14 @@ type getall struct {
 	getters []KeyGetter
 }
 
-func (g *getall) From(data map[string]interface{}) interface{} {
+func (g *getall) Key() string {
+	return ""
+}
+
+func (g *getall) From(inputresult map[string]interface{}, data map[string]interface{}) interface{} {
 	result := map[string]interface{}{}
 	for _, getter := range g.getters {
-		result[getter.Key()] = getter.From(data)
+		result[getter.Key()] = getter.From(inputresult, data)
 	}
 	return result
 }

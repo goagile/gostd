@@ -36,7 +36,7 @@ func (s *set) To(result map[string]interface{}, data map[string]interface{}) {
 		result[s.key] = inner
 
 	case Getter:
-		result[s.key] = v.From(data)
+		result[s.key] = v.From(result, data)
 
 	default:
 		result[s.key] = v

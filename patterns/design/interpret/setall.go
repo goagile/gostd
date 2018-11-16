@@ -11,6 +11,10 @@ type setall struct {
 	setters []Setter
 }
 
+func (e *setall) Key() string {
+	return ""
+}
+
 func (e *setall) To(result map[string]interface{}, data map[string]interface{}) {
 	for _, s := range e.setters {
 		s.To(result, data)
