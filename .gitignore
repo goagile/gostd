@@ -1,7 +1,1 @@
-
 .directory
-notify/config.txt
-
-*.bleve
-*/*.bleve
-**/*.bleve
