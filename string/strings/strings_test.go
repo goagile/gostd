@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"unicode"
 )
 
 //
@@ -131,6 +132,28 @@ func Test_HasSuffix(t *testing.T) {
 }
 
 //
+// Map
+//
+func Test_Map(t *testing.T) {
+	want := "11111"
+
+	s := "01010"
+
+	zeroToOne := func(r rune) rune {
+		if r == '0' {
+			return '1'
+		}
+		return r
+	}
+
+	got := strings.Map(zeroToOne, s)
+
+	if want != got {
+		t.Fatalf("\nwant: %v\ngot: %v\n", want, got)
+	}
+}
+
+//
 // Fields
 //
 func Test_Fields(t *testing.T) {
@@ -153,23 +176,27 @@ func Test_Fields(t *testing.T) {
 }
 
 //
-// Map
+// FieldsFunc
 //
-func Test_Map(t *testing.T) {
-	want := "11111"
-
-	s := "01010"
-
-	zeroToOne := func(r rune) rune {
-		if r == '0' {
-			return '1'
-		}
-		return r
+func Test_FieldsFunc(t *testing.T) {
+	tests := []struct {
+		str  string
+		want []string
+	}{
+		{" aa 11 22 bb ", []string{"11", "22"}},
 	}
 
-	got := strings.Map(zeroToOne, s)
+	isNotDigit := func(r rune) bool {
+		return !unicode.IsDigit(r)
+	}
 
-	if want != got {
-		t.Fatalf("\nwant: %v\ngot: %v\n", want, got)
+	for _, test := range tests {
+
+		got := strings.FieldsFunc(test.str, isNotDigit)
+
+		want := test.want
+		if !reflect.DeepEqual(want, got) {
+			t.Fatalf("\nwant: %v\ngot: %v\n", want, got)
+		}
 	}
 }
