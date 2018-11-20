@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// New client to TCP Clock with NetCat app:
+// $ nc 127.0.0.1 8081
+
 func main() {
 	listener, err := net.Listen("tcp", "127.0.0.1:8081")
 	if err != nil {
