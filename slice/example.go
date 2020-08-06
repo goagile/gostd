@@ -36,4 +36,13 @@ func main() {
 		fmt.Println("i:", i, " v:", v)
 	}
 
+
+	fmt.Println("\n\n2 ** i:")
+	p2 := make([]int, 11)
+	for i, _ := range p2 {
+		p2[i] = 1 << uint(i)
+	}
+	for _, v := range p2 {
+		fmt.Println("\t", v)
+	}
 }
