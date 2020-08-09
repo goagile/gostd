@@ -62,9 +62,6 @@ func main() {
 
 
 	fmt.Println()
-	fmt.Println(what(complex(4, 5)))
-
-	fmt.Println()
 	fmt.Println(what(complex(math.MaxFloat64, math.MaxFloat64)))
 
 
