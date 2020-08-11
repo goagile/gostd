@@ -10,15 +10,15 @@ import (
 
 func main() {
 
-	r, err := NewPersonReader("./test/example.json")
+	s, err := NewPersonScanner("./test/example.json")
 	if err != nil {
-		log.Fatalf("NewPersonReader %v\n", err)
+		log.Fatalf("NewPersonScanner %v\n", err)
 	}
 
-	for r.NextPerson() {
-		p, err := r.ScanPerson()
+	for s.Next() {
+		p, err := r.Scan()
 		if err != nil {
-			log.Fatalf("ScanPerson err: %v\n", err)
+			log.Fatalf("Scan err: %v\n", err)
 		}
 		fmt.Println(p)
 	}
@@ -27,12 +27,12 @@ func main() {
 
 }
 
-func NewPersonReader(filename string) (*PersonReader, error) {
+func NewPersonScanner(filename string) (*PersonScanner, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
-	r := &PersonReader{
+	r := &PersonScanner{
 		dec: json.NewDecoder(f),
 		next: true,
 		scrolled: false,
@@ -40,7 +40,7 @@ func NewPersonReader(filename string) (*PersonReader, error) {
 	return r, nil
 }
 
-type PersonReader struct {
+type PersonScanner struct {
 	dec *json.Decoder
 	count int
 	file *os.File
@@ -48,17 +48,18 @@ type PersonReader struct {
 	err error
 	next bool
 	scrolled bool
+	t json.Token
 }
 
-func (r *PersonReader) Count() int {
+func (r *PersonScanner) Count() int {
 	return r.count
 }
 
-func (r *PersonReader) ScanPerson() (*Person, error) {
+func (r *PersonScanner) Scan() (*Person, error) {
 	return r.p, r.err
 }
 
-func (r *PersonReader) NextPerson() bool {
+func (r *PersonScanner) Next() bool {
 	defer func() {
 		if r.next == false {
 			r.file.Close()
@@ -66,22 +67,8 @@ func (r *PersonReader) NextPerson() bool {
 	}()
 
 	if !r.scrolled {
-		for r.dec.More() {
-			t, err := r.dec.Token()
-			if err != nil {
-				r.next = false
-				return r.next
-			}
-			if t == "persons" {
-				fmt.Printf("%T %v\n", t, t)
-				if _, err := r.dec.Token(); err != nil {
-					r.next = false
-					return r.next
-				}
-				break;
-			}
-		}
-		r.scrolled = true
+		r.next = r.scroll()
+		r.scrolled = r.next
 	}
 
 	if err := r.dec.Decode(&r.p); err != nil {
@@ -92,6 +79,21 @@ func (r *PersonReader) NextPerson() bool {
 
 	r.next = true
 	return r.next
+}
+
+func (r *PersonScanner) scroll() bool {
+	for r.dec.More() {
+		if r.t, r.err = r.dec.Token(); r.err != nil {
+			return false
+		}
+		if r.t == "persons" {
+			if r.t, r.err = r.dec.Token(); r.err != nil {
+				return false
+			}
+			break;
+		}
+	}
+	return true
 }
 
 type Person struct {
