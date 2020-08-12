@@ -1,26 +1,18 @@
-package main
+package est
 
 import (
 	"testing"
+	"fmt"
 )
 
-func Test_parse_empty(t *testing.T) {
-	want := 0*H
 
-	got, err := parse("")
-	if err != nil {
-		t.Fatalf("\nerr:%v\n", err)
-	}
+//
+// ParseDelta
+//
+func Test_ParseDelta_0percents(t *testing.T) {
+	want := Delta(0.)
 
-	if want != got {
-		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
-	}
-}
-	
-func Test_parse_1h(t *testing.T) {
-	want := 1*H
-
-	got, err := parse("1h")
+	got, err := ParseDelta("0%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
@@ -30,10 +22,10 @@ func Test_parse_1h(t *testing.T) {
 	}
 }
 
-func Test_parse_1h2h(t *testing.T) {
-	want := 3*H
+func Test_ParseDelta_10percents(t *testing.T) {
+	want := Delta(0.1)
 
-	got, err := parse("1h2h")
+	got, err := ParseDelta("10%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
@@ -43,10 +35,10 @@ func Test_parse_1h2h(t *testing.T) {
 	}
 }
 
-func Test_parse_1d(t *testing.T) {
-	want := 1*D
+func Test_ParseDelta_100percents(t *testing.T) {
+	want := Delta(1.)
 
-	got, err := parse("1d")
+	got, err := ParseDelta("100%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
@@ -56,10 +48,10 @@ func Test_parse_1d(t *testing.T) {
 	}
 }
 
-func Test_parse_1d1h(t *testing.T) {
-	want := 1*D+1*H
+func Test_ParseDelta_120percents(t *testing.T) {
+	want := Delta(1.2)
 
-	got, err := parse("1d1h")
+	got, err := ParseDelta("120%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
@@ -69,10 +61,10 @@ func Test_parse_1d1h(t *testing.T) {
 	}
 }
 
-func Test_parse_1w(t *testing.T) {
-	want := 1*W
+func Test_ParseDelta_point5percents(t *testing.T) {
+	want := Delta(0.05)
 
-	got, err := parse("1w")
+	got, err := ParseDelta(".5%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
@@ -82,39 +74,54 @@ func Test_parse_1w(t *testing.T) {
 	}
 }
 
-func Test_parse_1w2d(t *testing.T) {
-	want := 1*W + 2*D
+//
+// String
+//
+func Test_String_40percent(t *testing.T) {
+	want := "40%"
 
-	got, err := parse("1w2d")
+	d, err := ParseDelta("40%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
+
+	got := fmt.Sprintf("%v", d)
 
 	if want != got {
 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
 	}
 }
 
-func Test_parse_1w2d3h(t *testing.T) {
-	want := 1*W + 2*D + 3*H
+//
+// Int
+//
+func Test_Int(t *testing.T) {
+	want := 65
 
-	got, err := parse("1w2d3h")
+	d, err := ParseDelta("65%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
+
+	got := d.Int()
 
 	if want != got {
 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)
 	}
 }
 
-func Test_parse_1w2d3h4w5d6h(t *testing.T) {
-	want := 1*W + 2*D + 3*H + 4*W + 5*D + 6*H
+//
+// Float64
+//
+func Test_Float64(t *testing.T) {
+	want := 0.4
 
-	got, err := parse("1w2d3h4w5d6h")
+	d, err := ParseDelta("40%")
 	if err != nil {
 		t.Fatalf("\nerr:%v\n", err)
 	}
+
+	got := d.Float64()
 
 	if want != got {
 		t.Fatalf("\nwant:%v\ngot:%v\n", want, got)

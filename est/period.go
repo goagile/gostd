@@ -1,39 +1,39 @@
-package main
+package est
 
 import (
 	"regexp"
 	"strconv"
-	// "fmt"
+	"fmt"
 	"log"
 )
 
-func main() {
-
-}
-
 type Period float64
+
+func (p Period) String() string {
+	return fmt.Sprintf("%vh", float64(p))
+}
 
 var H Period = 1.
 var D Period = 8.*H
 var W Period = 5.*D
 
-var HoursRe = regexp.MustCompile(`(\d+)h`)
-var DaysRe = regexp.MustCompile(`(\d+)d`)
-var WeeksRe = regexp.MustCompile(`(\d+)w`)
+var hoursRe = regexp.MustCompile(`(\d+)h`)
+var daysRe = regexp.MustCompile(`(\d+)d`)
+var weeksRe = regexp.MustCompile(`(\d+)w`)
 
 func matchHours(s string) [][]string {
-	return HoursRe.FindAllStringSubmatch(s, -1)
+	return hoursRe.FindAllStringSubmatch(s, -1)
 }
 
 func matchDays(s string) [][]string {
-	return DaysRe.FindAllStringSubmatch(s, -1)
+	return daysRe.FindAllStringSubmatch(s, -1)
 }
 
 func matchWeeks(s string) [][]string {
-	return WeeksRe.FindAllStringSubmatch(s, -1)
+	return weeksRe.FindAllStringSubmatch(s, -1)
 }
 
-func parse(s string) (Period, error) {
+func ParsePeriod(s string) (Period, error) {
 	h := 0 * H
 
 	for _, m := range matchHours(s) {
