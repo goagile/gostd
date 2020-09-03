@@ -1,19 +1,16 @@
-package main
+package main 
 
 import (
-	"flag"
+	"os"
 	"fmt"
-	"strings"
 )
 
-var n = flag.Bool("n", false, "пропуск символа новой строки")
-
 func main() {
-	flag.Parse()
 
-	fmt.Println("Аргументы:")
+	fmt.Println("Args")
 
-	fmt.Print(strings.Join(flag.Args(), ", "))
+	for _, a := range os.Args {
+		fmt.Println(a)
+	}
 
-	fmt.Println()
 }
