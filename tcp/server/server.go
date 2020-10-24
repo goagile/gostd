@@ -1,11 +1,16 @@
 package main
 
 import (
-	"bufio"
 	"flag"
+	"fmt"
+	"io"
 	"log"
 	"net"
+	"time"
 )
+
+const timeout = 10 * time.Second
+const maxReadBuf = 4 // 4 byte
 
 func main() {
 	var addr string
@@ -25,7 +30,7 @@ func main() {
 			log.Println("Accept:", err)
 			continue
 		}
-
+		c.SetDeadline(time.Now().Add(timeout))
 		log.Println("Accepted:", c.RemoteAddr())
 		go handle(c)
 	}
@@ -34,12 +39,13 @@ func main() {
 func handle(c net.Conn) {
 	defer c.Close()
 	for {
-		r := bufio.NewReader(c)
-		s, err := r.ReadString('\n')
-		if err != nil {
+		var cmd string
+		r := io.LimitReader(c, maxReadBuf)
+		if _, err := fmt.Fscan(r, &cmd); err != nil {
 			log.Println(err)
 			break
 		}
-		log.Println(s)
+		log.Println(cmd)
+		c.SetDeadline(time.Now().Add(timeout))
 	}
 }
