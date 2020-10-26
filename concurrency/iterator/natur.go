@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func main() {
@@ -14,17 +13,12 @@ func main() {
 		for _, i := range []int{1, 2, 3, 4, 5} {
 			integers <- i
 		}
+		close(integers)
 	}()
 
 	// iterate over chan and print each i
-	go func() {
-		for i := range integers {
-			fmt.Println(i)
-		}
-	}()
-
-	time.Sleep(time.Second)
-
-	close(integers)
+	for i := range integers {
+		fmt.Println(i)
+	}
 
 }

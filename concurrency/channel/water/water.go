@@ -12,6 +12,7 @@ func main() {
 
 	tube := make(chan Water, 3)
 
+
 	go func() {
 		tube<-  5*L
 		tube<- 15*L
@@ -19,13 +20,17 @@ func main() {
 		close(tube)
 	}()
 
+
 	var barrel Water
 	barrel += <-tube
 	barrel += <-tube
-	fmt.Println("barrel", barrel)
+
 
 	var bootle Water
 	bootle += <-tube
-	fmt.Println("bottle", bootle)
 
+
+	fmt.Println("barrel", barrel)
+	fmt.Println("bottle", bootle)
+	
 }

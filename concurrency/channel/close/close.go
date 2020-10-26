@@ -6,27 +6,22 @@ import (
 
 func main() {
 
-	c := make(chan int, 10)
+	nums := make(chan int, 50)
 	
-	go fib(cap(c), c)
+	go genfib(nums)
 
-	for {
-		p, ok := <- c 
-		if !ok {
-			break
-		}
-		fmt.Printf("%v ", p)
+	for n := range nums {
+		fmt.Print(n, " ")
 	}
-
-	fmt.Println("\nfinish")
+	fmt.Println()
 
 }
 
-func fib(n int, c chan int) {
-	x, y := 0, 1
-	for i := 0; i < n; i++ {
-		c <- x
+func genfib(nums chan<- int) {
+	x, y := 1, 1
+	for i := 0; i < cap(nums); i++ {
+		nums <- x
 		x, y = y, x+y
 	}
-	close(c)
+	close(nums)
 }

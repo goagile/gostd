@@ -13,17 +13,14 @@ func main() {
 
 	for i := 0; i < n; i++ {
 		go func(i int) {
-			sqrs <- square(i)
+			x := i * i
+			time.Sleep(time.Duration(x) * time.Millisecond)
+			sqrs <- x
 		}(i)
 	}
 
 	for i := 0; i < n; i++ {
-		fmt.Println(<-sqrs)
+		fmt.Print(<-sqrs, " ")
 	}
-}
-
-func square(i int) int {
-	x := i * i
-	time.Sleep(time.Duration(x) * time.Millisecond)
-	return x
+	fmt.Println()
 }

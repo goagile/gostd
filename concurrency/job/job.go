@@ -6,75 +6,73 @@ import (
 	"time"
 )
 
-const n = 10
+type Job struct {
+	ID   int
+	Data int
+}
 
-var jobs = make(chan Job, n)
+type Result struct {
+	JobID int
+	Data  int
+	Time  time.Time
+}
 
-var results = make(chan Result, n)
+var (
+	jobs = make(chan Job)
+	results = make(chan Result)
+)
 
 func main() {
 	start := time.Now()
 
-	njobs := 10
-	go allocate(njobs)
 
-	done := make(chan bool)
-	go result(done)
 
-	nworkers := 10
-	pool(nworkers)
-	<-done
+	data := []int{2, 4, 3, 1, 5}
 
-	finish := time.Now()
-	diff := finish.Sub(start)
-	fmt.Printf("total: %.2v sec\n", diff)
+	go allocatejobs(data)
+
+	go makeworks(5)
+
+	for r := range results {
+		fmt.Printf("Result{JobID:%2v, Data:%2v, Time:%10v}\n", 
+			r.JobID, 
+			r.Data, 
+			time.Now().Sub(r.Time),
+		)
+	}
+
+
+
+	fmt.Println("Total time:", time.Now().Sub(start))
 }
 
-type Job struct {
-	id   int
-	data int
-}
-
-type Result struct {
-	job  Job
-	data int
-}
-
-func allocate(njobs int) {
-	for i := 0; i < njobs; i++ {
-		job := Job{id: i, data: 2}
-		jobs <- job
+func allocatejobs(data []int) {
+	for id, d := range data {
+		jobs <- Job{id+1, d}
 	}
 	close(jobs)
 }
 
-func pool(nworkers int) {
+func makeworks(n int) {
 	var wg sync.WaitGroup
-	for i := 0; i < nworkers; i++ {
+	for i := 0; i < n; i++ {
 		wg.Add(1)
-		go worker(&wg)
+		go func() {
+			defer wg.Done()
+			work()
+		}()
 	}
 	wg.Wait()
 	close(results)
 }
 
-func worker(wg *sync.WaitGroup) {
+func work() {
 	for job := range jobs {
-		out := Result{job, sqrt(job.data)}
-		results <- out
+		results <- Result{job.ID, sqrt(job.Data), time.Now()}
 	}
-	wg.Done()
 }
 
 func sqrt(x int) int {
-	time.Sleep(2 * time.Second)
+	time.Sleep(time.Duration(x) * time.Second)
 	return x * x
-}
-
-func result(done chan bool) {
-	for r := range results {
-		j := r.job
-		fmt.Printf("job(%v, %v) = %v\n", j.id, j.data, r.data)
-	}
-	done <- true
 }
