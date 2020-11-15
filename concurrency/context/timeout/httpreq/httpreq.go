@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -16,9 +17,13 @@ func main() {
 	fmt.Println("timeout", timeout)
 
 	ctx := context.Background()
-	ctx, _ = context.WithTimeout(ctx, timeout)
+	ctx, fin := context.WithTimeout(ctx, timeout)
+	defer fin()
 
-	req, _ := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 	req = req.WithContext(ctx)
 
 	client := new(http.Client)
@@ -27,5 +32,6 @@ func main() {
 		fmt.Println("Failure", err)
 		return
 	}
+	defer res.Body.Close()
 	fmt.Println("Success", res.StatusCode)
 }
