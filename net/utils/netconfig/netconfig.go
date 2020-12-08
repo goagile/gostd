@@ -8,25 +8,25 @@ import (
 
 func main() {
 	log.SetFlags(log.Lshortfile)
-	for _, nf := range netInterfaces() {
-		printInterface(nf)
+	for _, i := range netInterfaces() {
+		printInterface(i)
 	}
 }
 
 func netInterfaces() []net.Interface {
-	infs, err := net.Interfaces()
+	is, err := net.Interfaces()
 	if err != nil {
 		log.Fatal("net.Interfaces", err)
 	}
-	return infs
+	return is
 }
 
-func printInterface(nf net.Interface) {
-	println(nf.Name)
-	printAddressesFor(nf)
-	printHardwareAddressFor(nf)
-	println("  ", nf.Flags.String())
-	println("   MTU:", nf.MTU)
+func printInterface(i net.Interface) {
+	println(i.Name)
+	printAddressesFor(i)
+	printHardwareAddressFor(i)
+	println("  ", i.Flags.String())
+	println("   MTU:", i.MTU)
 	println()
 }
 
@@ -38,15 +38,15 @@ func printHardwareAddressFor(i net.Interface) {
 	println("   HWaddr:", hw)
 }
 
-func printAddressesFor(nf net.Interface) {
-	i, err := net.InterfaceByName(nf.Name)
+func printAddressesFor(i net.Interface) {
+	n, err := net.InterfaceByName(i.Name)
 	if err != nil {
 		log.Println("net.InterfaceByName", err)
 		return
 	}
-	addrs, err := i.Addrs()
+	addrs, err := n.Addrs()
 	if err != nil {
-		log.Println("i.Addrs", err)
+		log.Println("n.Addrs", err)
 		return
 	}
 	for _, a := range addrs {
