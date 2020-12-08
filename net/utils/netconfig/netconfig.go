@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"strings"
@@ -22,12 +23,12 @@ func netInterfaces() []net.Interface {
 }
 
 func printInterface(i net.Interface) {
-	println(i.Name)
+	fmt.Println(i.Name)
 	printAddressesFor(i)
 	printHardwareAddressFor(i)
-	println("  ", i.Flags.String())
-	println("   MTU:", i.MTU)
-	println()
+	fmt.Println("  ", i.Flags.String())
+	fmt.Println("   MTU:", i.MTU)
+	fmt.Println()
 }
 
 func printHardwareAddressFor(i net.Interface) {
@@ -35,7 +36,7 @@ func printHardwareAddressFor(i net.Interface) {
 	if "" == strings.TrimSpace(hw) {
 		return
 	}
-	println("   HWaddr:", hw)
+	fmt.Println("   HWaddr:", hw)
 }
 
 func printAddressesFor(i net.Interface) {
@@ -55,5 +56,5 @@ func printAddressesFor(i net.Interface) {
 }
 
 func printAddress(a net.Addr) {
-	println("  ", a.Network(), a.String())
+	fmt.Println("  ", a.Network(), a.String())
 }
