@@ -10,7 +10,9 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	for _, domain := range domains(os.Args[1:]) {
-		for _, host := range nameServers(domain) {
+		hosts := nameServers(domain)
+		hosts = append(hosts, mailServers(domain)...)
+		for _, host := range hosts {
 			log.Println(host)
 		}
 	}
@@ -30,6 +32,17 @@ func nameServers(domain string) (hosts []string) {
 	}
 	for _, ns := range nameServers {
 		hosts = append(hosts, ns.Host)
+	}
+	return hosts
+}
+
+func mailServers(domain string) (hosts []string) {
+	mailServers, err := net.LookupMX(domain)
+	if err != nil {
+		log.Fatalln("net.LookupMX", domain, err)
+	}
+	for _, mx := range mailServers {
+		hosts = append(hosts, mx.Host)
 	}
 	return hosts
 }
