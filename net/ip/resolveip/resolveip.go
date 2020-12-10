@@ -9,8 +9,8 @@ import (
 func main() {
 	args := os.Args[1:]
 	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, "usage: ./resolve hostname")
-		fmt.Fprintln(os.Stderr, "example: ./resolve google.ru")
+		fmt.Fprintln(os.Stderr, "usage: ./resolveip hostname")
+		fmt.Fprintln(os.Stderr, "example: ./resolveip google.ru")
 		os.Exit(1)
 	}
 	host := args[0]
