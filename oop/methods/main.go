@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/khardi/trygo/gopl/methods/geom"
+
+	"github.com/goagile/gostd/oop/methods/geom"
 )
 
-func main()  {
+func main() {
 	p := geom.Point{10, 20}
 	q := geom.Point{30, 40}
 	distance := p.Distance(q)

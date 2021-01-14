@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"io/ioutil"
 	"log"
+	"os"
 )
 
 func main() {
-	f, err := os.Open("./test/example.json")
+	f, err := os.Open("../test/example.json")
 	if err != nil {
 		log.Fatalf("Open: %v\n", err)
 	}

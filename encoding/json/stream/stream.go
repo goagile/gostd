@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+
 	// "io/ioutil"
-	"log"
 	"encoding/json"
+	"log"
 )
 
 func main() {
@@ -16,14 +17,14 @@ func main() {
 	}
 
 	for s.Next() {
-		p, err := r.Scan()
+		p, err := s.Scan()
 		if err != nil {
 			log.Fatalf("Scan err: %v\n", err)
 		}
 		fmt.Println(p)
 	}
 
-	fmt.Printf("Read %v persons.\n", r.Count())
+	fmt.Printf("Read %v persons.\n", s.Count())
 
 }
 
@@ -33,22 +34,22 @@ func NewPersonScanner(filename string) (*PersonScanner, error) {
 		return nil, err
 	}
 	r := &PersonScanner{
-		dec: json.NewDecoder(f),
-		next: true,
+		dec:      json.NewDecoder(f),
+		next:     true,
 		scrolled: false,
 	}
 	return r, nil
 }
 
 type PersonScanner struct {
-	dec *json.Decoder
-	count int
-	file *os.File
-	p *Person
-	err error
-	next bool
+	dec      *json.Decoder
+	count    int
+	file     *os.File
+	p        *Person
+	err      error
+	next     bool
 	scrolled bool
-	t json.Token
+	t        json.Token
 }
 
 func (r *PersonScanner) Count() int {
@@ -90,13 +91,13 @@ func (r *PersonScanner) scroll() bool {
 			if r.t, r.err = r.dec.Token(); r.err != nil {
 				return false
 			}
-			break;
+			break
 		}
 	}
 	return true
 }
 
 type Person struct {
-	Name string `json:"name"`
-	Age float64 `json:"age"`
+	Name string  `json:"name"`
+	Age  float64 `json:"age"`
 }
