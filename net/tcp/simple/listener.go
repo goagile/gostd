@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 func main() {
@@ -23,6 +25,22 @@ func main() {
 }
 
 func handle(conn net.Conn) {
-	fmt.Println("Connencted: ", conn.RemoteAddr())
-	fmt.Fprintf(conn, "OK")
+	a := conn.RemoteAddr()
+	fmt.Println(a, "Connencted")
+	fmt.Fprintf(conn, "You are %v", a)
+	s := bufio.NewScanner(conn)
+	for s.Scan() {
+		t := strings.TrimSpace(s.Text())
+		if t == "" {
+			continue
+		}
+		if t == "Quit" || t == "Exit" {
+			fmt.Fprintf(conn, "Bye, Bye!\r\n")
+			fmt.Println(a, "Exited")
+			return
+		}
+		fmt.Println(a, t)
+	}
+	fmt.Fprintf(conn, "\r\n")
+	fmt.Println(a, "Disconnected")
 }
